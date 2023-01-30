@@ -1,8 +1,9 @@
 package api
 
 import (
-	"main/core"
 	"net/http"
+
+	"github.com/johnjones4/keeper/core"
 
 	"github.com/go-chi/chi/v5"
 )

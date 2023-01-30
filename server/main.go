@@ -2,9 +2,9 @@ package main
 
 import (
 	"main/api"
-	"main/core"
 	"main/hybridstore"
 	"main/processors"
+	"main/types"
 	"net/http"
 	"os"
 
@@ -23,7 +23,7 @@ func main() {
 		log.Panic(err)
 	}
 
-	runtime := core.Runtime{
+	runtime := types.Runtime{
 		Store: hstore,
 		Log:   log,
 	}

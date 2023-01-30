@@ -1,14 +1,10 @@
 package core
 
-import (
-	"time"
-
-	"github.com/sirupsen/logrus"
-)
+import "time"
 
 type StructuredDataProperty struct {
 	Type       []string                 `json:"type"`
-	String     string                   `json:"string,omitempty"`
+	String     string                   `json:"str,omitempty"`
 	Int        int                      `json:"int,omitempty"`
 	Float      float64                  `json:"float,omitempty"`
 	Bool       bool                     `json:"bool,omitempty"`
@@ -18,7 +14,7 @@ type StructuredDataProperty struct {
 
 type NoteBody struct {
 	StructuredData []StructuredDataProperty `json:"structuredData,omitempty"`
-	Text           string                   `json:"text,omitempty"`
+	Text           string                   `json:"text"`
 }
 
 type Note struct {
@@ -44,30 +40,4 @@ type NotesQuery struct {
 type TagInfo struct {
 	Tag   string `json:"tag"`
 	Count int    `json:"count"`
-}
-
-type Store interface {
-	SaveNote(note *Note) error
-	RenameAndSaveNote(note *Note, oldName string) error
-	DeleteNote(note *Note) error
-	GetNote(id string) (Note, error)
-	GetNoteByPath(path string) (Note, error)
-	GetNotes(query NotesQuery) ([]Note, error)
-	GetTags() ([]TagInfo, error)
-}
-
-type Processor func(note *Note) error
-
-type Runtime struct {
-	Store      Store
-	Log        logrus.FieldLogger
-	Processors []Processor
-}
-
-type ValidationError struct {
-	Message string
-}
-
-func (v *ValidationError) Error() string {
-	return v.Message
 }

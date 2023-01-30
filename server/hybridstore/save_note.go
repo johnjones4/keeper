@@ -3,10 +3,11 @@ package hybridstore
 import (
 	"encoding/json"
 	"errors"
-	"main/core"
 	"os"
 	"path"
 	"time"
+
+	"github.com/johnjones4/keeper/core"
 
 	"github.com/google/uuid"
 )
@@ -43,22 +44,24 @@ func (s *HybridStore) SaveNote(note *core.Note) error {
 		if err != nil {
 			return err
 		}
+	}
+	fullPath := path.Join(s.filePath, note.Path)
 
-		var contents []byte
+	var contents []byte
+	var err error
 
-		if note.Format == "application/json" {
-			contents, err = json.MarshalIndent(note.Body.StructuredData, "", "  ")
-			if err != nil {
-				return err
-			}
-		} else {
-			contents = []byte(note.Body.Text)
-		}
-
-		err = os.WriteFile(fullPath, contents, 0755)
+	if note.Format == "application/json" {
+		contents, err = json.MarshalIndent(note.Body.StructuredData, "", "  ")
 		if err != nil {
 			return err
 		}
+	} else {
+		contents = []byte(note.Body.Text)
+	}
+
+	err = os.WriteFile(fullPath, contents, 0755)
+	if err != nil {
+		return err
 	}
 
 	if isNew {
@@ -76,7 +79,20 @@ func (s *HybridStore) SaveNote(note *core.Note) error {
 			return err
 		}
 	} else {
-		_, err := s.db.Exec(
+		_, err := s.db.Exec("UPDATE notes SET path = ?, title = ?, sourceURL = ?, source = ?, format = ?, updated = ? WHERE id = ?",
+			note.Path,
+			note.Title,
+			note.SourceURL,
+			note.Source,
+			note.Format,
+			note.Updated.Unix(),
+			note.ID,
+		)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.db.Exec(
 			"DELETE FROM tags_notes WHERE note_id = $1",
 			note.ID,
 		)

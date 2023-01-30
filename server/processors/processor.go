@@ -1,15 +1,15 @@
 package processors
 
 import (
-	"main/core"
+	"main/types"
 )
 
 type Processors struct {
-	Runtime *core.Runtime
+	Runtime *types.Runtime
 }
 
-func (p *Processors) All() []core.Processor {
-	return []core.Processor{
+func (p *Processors) All() []types.Processor {
+	return []types.Processor{
 		p.structuredData,
 		p.inference,
 		p.validate,

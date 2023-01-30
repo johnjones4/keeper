@@ -21,6 +21,9 @@ require (
 	github.com/denisbrodbeck/striphtmltags v6.6.6+incompatible
 	github.com/iand/microdata v0.0.3
 	github.com/jmoiron/sqlx v1.3.5
+	github.com/johnjones4/keeper/core v0.0.0-00010101000000-000000000000
 	github.com/piprate/json-gold v0.5.0
 	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
 )
+
+replace github.com/johnjones4/keeper/core => ../core

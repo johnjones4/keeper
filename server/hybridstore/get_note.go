@@ -1,7 +1,7 @@
 package hybridstore
 
 import (
-	"main/core"
+	"github.com/johnjones4/keeper/core"
 )
 
 func (s *HybridStore) GetNote(id string) (core.Note, error) {

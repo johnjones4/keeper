@@ -1,8 +1,9 @@
 package api
 
 import (
-	"main/core"
 	"net/http"
+
+	"github.com/johnjones4/keeper/core"
 )
 
 func (a *API) postNote(w http.ResponseWriter, r *http.Request) {
@@ -16,7 +17,8 @@ func (a *API) postNote(w http.ResponseWriter, r *http.Request) {
 	for _, p := range a.runtime.Processors {
 		err = p(&note)
 		if err != nil {
-			a.runtime.Log.Error(err)
+			errorResponse(a.runtime.Log, w, 0, err)
+			return
 		}
 	}
 

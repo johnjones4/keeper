@@ -1,6 +1,6 @@
 package hybridstore
 
-import "main/core"
+import "github.com/johnjones4/keeper/core"
 
 func (s *HybridStore) GetNoteByPath(path string) (core.Note, error) {
 	row := s.db.QueryRow("SELECT id, path, title, sourceURL, source, format, created, updated FROM notes WHERE path = $1", path)

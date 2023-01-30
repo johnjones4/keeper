@@ -4,12 +4,13 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"main/core"
 	"os"
 	"path"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/johnjones4/keeper/core"
 
 	"github.com/flytam/filenamify"
 )
@@ -37,8 +38,8 @@ func parseRow(s scannable) (core.Note, error) {
 		return core.Note{}, err
 	}
 
-	note.Created = time.Unix(createdUnix, 0)
-	note.Updated = time.Unix(updatedUnix, 0)
+	note.Created = time.Unix(createdUnix, 0).UTC()
+	note.Updated = time.Unix(updatedUnix, 0).UTC()
 
 	return note, nil
 }
@@ -48,11 +49,7 @@ func generateNoteFilename(name, format string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	ext := "txt"
-	slashIndex := strings.Index(format, "/")
-	if slashIndex > 0 {
-		ext = format[slashIndex+1:]
-	}
+	ext := extensionForFormat(format)
 	return fmt.Sprintf("%s.%s", safename, ext), nil
 }
 
@@ -119,4 +116,15 @@ func uniqueLc(arr []string) []string {
 		}
 	}
 	return result
+}
+
+func extensionForFormat(format string) string {
+	switch format {
+	case "application/json":
+		return "json"
+	case "text/markdown":
+		return "md"
+	default:
+		return "txt"
+	}
 }

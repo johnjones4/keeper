@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"main/core"
 	"net/http"
 	"net/url"
+
+	"github.com/johnjones4/keeper/core"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/iand/microdata"

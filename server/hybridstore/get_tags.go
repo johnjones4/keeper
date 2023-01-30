@@ -1,6 +1,6 @@
 package hybridstore
 
-import "main/core"
+import "github.com/johnjones4/keeper/core"
 
 func (s *HybridStore) GetTags() ([]core.TagInfo, error) {
 	rows, err := s.db.Query("SELECT tag, COUNT(*) FROM tags_notes GROUP BY tag ORDER BY tag")

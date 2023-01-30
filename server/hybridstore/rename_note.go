@@ -1,9 +1,10 @@
 package hybridstore
 
 import (
-	"main/core"
 	"os"
 	"path"
+
+	"github.com/johnjones4/keeper/core"
 )
 
 func (s *HybridStore) RenameAndSaveNote(note *core.Note, newName string) error {

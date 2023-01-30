@@ -1,8 +1,9 @@
 package api
 
 import (
-	"main/core"
 	"net/http"
+
+	"github.com/johnjones4/keeper/core"
 )
 
 func (a *API) getNotes(w http.ResponseWriter, r *http.Request) {

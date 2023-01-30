@@ -1,7 +1,7 @@
 package processors
 
 import (
-	"main/core"
+	"github.com/johnjones4/keeper/core"
 )
 
 func (p *Processors) inference(note *core.Note) error {

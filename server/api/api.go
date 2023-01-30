@@ -1,7 +1,7 @@
 package api
 
 import (
-	"main/core"
+	"main/types"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -9,11 +9,11 @@ import (
 )
 
 type API struct {
-	runtime *core.Runtime
+	runtime *types.Runtime
 	handler *chi.Mux
 }
 
-func New(runtime *core.Runtime) *API {
+func New(runtime *types.Runtime) *API {
 	h := API{
 		runtime: runtime,
 		handler: chi.NewRouter(),
@@ -35,6 +35,7 @@ func New(runtime *core.Runtime) *API {
 			r.Route("/{id}", func(r chi.Router) {
 				r.Get("/", h.getNote)
 				r.Put("/", h.putNote)
+				r.Delete("/", h.deleteNote)
 			})
 		})
 	})

@@ -1,8 +1,9 @@
 package hybridstore
 
 import (
-	"main/core"
 	"strings"
+
+	"github.com/johnjones4/keeper/core"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -39,7 +40,7 @@ func (s *HybridStore) GetNotes(query core.NotesQuery) ([]core.Note, error) {
 	if len(predicates) > 0 {
 		queryStr += " WHERE " + strings.Join(predicates, " AND ")
 	}
-	queryStr += " ORDER BY created"
+	queryStr += " ORDER BY created DESC LIMIT 1000"
 
 	rows, err := s.db.Query(queryStr, params...)
 	if err != nil {
