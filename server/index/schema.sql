@@ -1,0 +1,6 @@
+CREATE VIRTUAL TABLE IF NOT EXISTS search_index USING FTS5(keypath,body);
+
+CREATE TABLE IF NOT EXISTS mod_index (
+  keypath TEXT PRIMARY KEY,
+  modified INTEGER NOT NULL
+);

@@ -45,5 +45,11 @@ func (a *API) updateNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err = a.runtime.Index.Update(&note)
+	if err != nil {
+		errorResponse(w, http.StatusInternalServerError, err)
+		return
+	}
+
 	jsonResponse(w, http.StatusOK, note)
 }

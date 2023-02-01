@@ -49,6 +49,15 @@ func (s *StaticFileStore) GetNotes(pageSize int, page string) ([]string, string,
 	return col.notes, nextPage, nil
 }
 
+func (s *StaticFileStore) isIgnored(f string) bool {
+	for _, d := range s.ignore {
+		if d == f {
+			return true
+		}
+	}
+	return false
+}
+
 func (s *StaticFileStore) exploreDir(col *collector, startPath string, dir string) (string, error) {
 	contents, err := os.ReadDir(path.Join(s.rootDir, dir))
 	if err != nil {
@@ -56,23 +65,25 @@ func (s *StaticFileStore) exploreDir(col *collector, startPath string, dir strin
 	}
 
 	for _, file := range contents {
-		keyPath := path.Join(dir, file.Name())
-		if file.IsDir() {
-			lastPath, err := s.exploreDir(col, startPath, keyPath)
-			if err != nil {
-				return "", err
-			}
-			if lastPath != "" {
-				return lastPath, nil
-			}
-		} else {
-			if col.hasFoundStartPath {
-				col.addNote(keyPath)
-				if col.isFull() {
-					return keyPath, nil
+		if !s.isIgnored(file.Name()) {
+			keyPath := path.Join(dir, file.Name())
+			if file.IsDir() {
+				lastPath, err := s.exploreDir(col, startPath, keyPath)
+				if err != nil {
+					return "", err
 				}
-			} else if keyPath == startPath {
-				col.hasFoundStartPath = true
+				if lastPath != "" {
+					return lastPath, nil
+				}
+			} else {
+				if col.hasFoundStartPath {
+					col.addNote(keyPath)
+					if col.isFull() {
+						return keyPath, nil
+					}
+				} else if keyPath == startPath {
+					col.hasFoundStartPath = true
+				}
 			}
 		}
 	}

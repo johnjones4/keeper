@@ -4,7 +4,8 @@ import { Note } from './Note';
 
 interface NotesListProps {
   onNoteSelected(key: string): void
-  onNewNote(prefix: string): void
+  onNewNote(prefix?: string): void
+  onSearch(query: string): void
   notes: string[]
 }
 
@@ -58,6 +59,7 @@ class NoteNode {
 
 const NotesList = (props: NotesListProps) => {
   const [tree, setTree] = useState(new NoteNode("", undefined))
+  const [query, setQuery] = useState('')
 
   useEffect(() => {
     const localTree = new NoteNode("", undefined)
@@ -90,6 +92,16 @@ const NotesList = (props: NotesListProps) => {
 
   return (
     <div className='NoteList'>
+      <div className='NoteListSearch'>
+        { query !== '' && (
+          <button className='Btn' onClick={() => {
+            props.onSearch('')
+            setQuery('')
+          }}>X</button>
+        ) }
+        <input className='Input' value={query} onChange={(e) => setQuery(e.target.value)} />
+        <button className='Btn' onClick={() => props.onSearch(query)}>Search</button>
+      </div>
       <ul>
         { renderTree(tree) }
       </ul>
