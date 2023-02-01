@@ -14,7 +14,7 @@ function App() {
   const [notes, setNotes] = useState([] as string[])
   const [note, setNote] = useState(null as string|null)
   const [message, setMessage] = useState(null as null|Message)
-  const [addNotePrefix, setAddNotePrefix] = useState('')
+  const [addNotePrefix, setAddNotePrefix] = useState(null as string|null)
 
   const loadNotes = async () => {
     try {
@@ -33,6 +33,15 @@ function App() {
     } catch (e) {
       showMessage({type: MessageType.error, message: `${e}`})
     }
+  }
+
+  const doSearch = async (query: string) => {
+    if (query === '') {
+      loadNotes()
+      return
+    }
+    const localNotes = await Note.search(query)
+    setNotes(localNotes.notes)
   }
 
   useEffect(() => {
@@ -64,7 +73,8 @@ function App() {
       <NotesList 
         notes={notes}
         onNoteSelected={k => setNote(k)} 
-        onNewNote={prefix => setAddNotePrefix(prefix)}
+        onNewNote={prefix => setAddNotePrefix(prefix !== undefined ? prefix : null)}
+        onSearch={q => doSearch(q)}
         />
       { note && (<NoteDetail 
         noteKey={note} 
@@ -72,16 +82,16 @@ function App() {
         onMessage={m => showMessage({type: MessageType.alert, message: m})}
         />
       ) }
-      { addNotePrefix && (
+      { addNotePrefix !== null && (
         <AddNote 
           initialPrefix={addNotePrefix} 
           onError={e =>  handleError(e)}
           onNewNote={n => {
             setNote(n.key)
-            setAddNotePrefix('')
+            setAddNotePrefix(null)
             setNotes(notes.concat(n.key))
           }} 
-          onCancel={() => setAddNotePrefix('')} 
+          onCancel={() => setAddNotePrefix(null)} 
         />
       )}
       { message && <div className={`Message Message-${message.type}`}>{message.message}</div> }

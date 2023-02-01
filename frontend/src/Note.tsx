@@ -51,6 +51,15 @@ export class Note {
     return new Note(json as NoteResponse)
   }
 
+  static async search(query: string): Promise<NotesResponse> {
+    const res = await fetch(`/api/note?q=${encodeURIComponent(query)}`, {
+      headers: tokenManager.getHeaders()
+    })
+    const json = await res.json()
+    errorHandler(res, json)
+    return json as NotesResponse
+  }
+
   static async newNote(key: string, body: string): Promise<Note> {
     const res = await fetch('/api/note', {
       method: 'POST',

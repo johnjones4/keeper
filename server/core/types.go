@@ -14,8 +14,16 @@ type Store interface {
 	GetNotes(pageSize int, page string) ([]string, string, error)
 }
 
+type Index interface {
+	ReIndex() error
+	Add(n *Note) error
+	Update(n *Note) error
+	Search(query string) ([]string, error)
+}
+
 type RuntimeContext struct {
 	Store        Store
+	Index        Index
 	PrivateKey   []byte
 	PasswordHash []byte
 }
