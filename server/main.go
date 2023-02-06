@@ -17,7 +17,7 @@ func startIndex(idx core.Index) {
 		if err != nil {
 			panic(err)
 		}
-		time.Sleep(time.Hour)
+		time.Sleep(time.Hour * 6)
 	}
 }
 

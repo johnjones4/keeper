@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Note } from './Note';
+import { Note } from '../../models/Note';
+import MDEditor from '@uiw/react-md-editor';
+import './NoteDetail.css'
+import TodoEditor from '../TodoEditor/TodoEditor';
 
 interface NotesListProps {
   noteKey: string
@@ -52,6 +55,31 @@ const NoteDetail = (props: NotesListProps) => {
     setNoteBody('')
   }
 
+  const renderEditor = (): any => {
+    if (note) {
+      const ext = note.key.substring(note.key.indexOf('.')+1)
+      switch (ext) {
+        case 'md':
+          return (
+            <MDEditor
+              value={noteBody}
+              onChange={v => bodyChange(v ? v : '')}
+              preview='edit'
+            />
+          )
+        case 'todo':
+          return (
+            <TodoEditor
+              value={noteBody}
+              onChange={v => bodyChange(v ? v : '')}
+            />
+          )
+        default:
+          return (<textarea className='TexteditorPlain' value={noteBody} onChange={(event) => bodyChange(event.target.value)} />)
+      }
+    }
+  }
+
   if (!note) {
     return null
   }
@@ -64,7 +92,7 @@ const NoteDetail = (props: NotesListProps) => {
         </div>
         <button className='Btn NoteDetailCloseButton' onClick={() => closeNote()}>Close</button>
       </div>
-      <textarea value={noteBody} onChange={(event) => bodyChange(event.target.value)} />
+      { renderEditor() }
     </div>
   )
 }

@@ -17,6 +17,28 @@ body {
   color: black;
 }
 
+.InputGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.InputGroup .Input {
+  border-radius: 0;
+  flex-grow: 1;
+}
+
+.InputGroup .Btn:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+}
+
+.InputGroup .Btn:last-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: none;
+}
+
 label {
   display: block;
   margin: 0 0 0.25em 0;
@@ -64,128 +86,6 @@ label {
   height: 100%;
 }
 
-.NoteList {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 20%;
-  padding: 1em;
-  border-right: solid 1px black;
-  overflow-y: scroll;
-}
-
-.NoteList .NoteListSearch {
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 0.5em;
-}
-
-.NoteList .NoteListSearch .Input {
-  border-radius: 0;
-}
-
-.NoteList .NoteListSearch .Btn:first-child {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  border-right: none;
-}
-
-.NoteList .NoteListSearch .Btn:last-child {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  border-left: none;
-}
-
-.NoteList ul {
-  padding: 0 0 0 1em;
-  margin: 0;
-}
-
-.NoteList ul li {
-  padding: 0;
-  margin: 0;
-  margin: 0 0 0.25em 0;
-}
-
-.NoteList .NoteTitle {
-  display: flex;
-  flex-direction: row;
-  border-bottom: dotted 1px black;
-  margin: 0 0 0.5em 0;
-  align-items: center;
-}
-
-.NoteList .NoteTitle .NoteTitleText {
-  flex-grow: 1;
-}
-
-.NoteList .NoteTitle .ButtonAddNote {
-  border: none;
-  outline: none;
-  padding: 0;
-  margin: 0;
-  display: block;
-  background: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: black;
-}
-
-.NoteList .ButtonOpenNote {
-  border: none;
-  outline: none;
-  padding: 0;
-  margin: 0;
-  display: block;
-  background: none;
-  text-align: left;
-  cursor: pointer;
-  width: 100%;
-  padding: 0.25em;
-  color: black;
-}
-
-.NoteList .ButtonOpenNote:hover {
-  text-decoration: underline;
-  background-color: #f4f4f4;
-}
-
-.NoteDetail {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 80%;
-  display: flex;
-  flex-direction: column;
-}
-
-.NoteDetail .NoteDetailHead {
-  border-bottom: solid 1px black;
-  padding: 1em;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.NoteDetail .NoteDetailHead .NoteDetailHeadTitle {
-  flex-grow: 1;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.NoteDetail .NoteDetailHead .NoteDetailCloseButton {
-  display: none;
-}
-
-.NoteDetail textarea {
-  flex-grow: 1;
-  border: none;
-  outline: none;
-  margin: 1em;
-}
-
 .Message {
   position: fixed;
   z-index: 999999;
@@ -200,51 +100,4 @@ label {
 .Message-error {
   background-color: red;
   color: white;
-}
-
-.AddNote {
-  position: fixed;
-  padding: 1em;
-  background: white;
-  border: solid 1px black;
-  left: 0;
-  right: 0;
-  top: 20%;
-  max-width: 500px;
-  margin: auto;
-  box-shadow: 4px 4px 0 gray;
-}
-
-.AddNote .AddNoteHead {
-  margin: 0 0 1em 0;
-}
-
-@media (max-width: 768px) {
-  .NoteList, .NoteDetail {
-    width: 100%;
-    right: 0;
-    left: 0;
-    background: white;
-  }
-
-  .NoteDetail .NoteDetailHead .NoteDetailCloseButton {
-    display: block;
-  }
-
-  .NoteDetail textarea {
-    top: 40px;
-  }
-
-  .AddNote {
-    top: 1em;
-    left: 1em;
-    right: 1em;
-    bottom: 1em;
-    max-width: none;
-    margin: 0;
-  }
- 
-  .NoteDetail textarea {
-    font-size: 1.5em;
-  }
 }

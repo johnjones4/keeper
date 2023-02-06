@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import AddNote from './AddNote';
+import AddNote from './components/AddNote/AddNote';
 import './App.css';
-import Login from './Login';
-import { Message, MessageType } from './Message';
-import { Note } from './Note';
-import NoteDetail from './NoteDetail';
-import NotesList from './NotesList';
-import tokenManager from './TokenManager'
+import Login from './components/Login';
+import { Message, MessageType } from './models/Message';
+import { Note } from './models/Note';
+import NoteDetail from './components/NoteDetail/NoteDetail';
+import NotesList from './components/NotesList/NotesList';
+import tokenManager from './models/TokenManager'
 
 
 function App() {
