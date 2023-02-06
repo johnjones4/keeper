@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Note } from './Note';
+import { Note } from '../../models/Note';
 import sanitize from 'sanitize-filename';
+import './AddNote.css'
+const path = require('path-browserify');
 
 interface AddNoteProps {
   initialPrefix: string
@@ -18,9 +20,11 @@ const AddNote = (props: AddNoteProps) => {
     if (!isValidName()) {
       return 
     }
-    const key = prefix + '/' + name + '.' + format
+    const cleanPrefix = path.normalize(path.isAbsolute(prefix) ? prefix : path.join('/', prefix))
+    const key = path.normalize(path.join(cleanPrefix, name + '.' + format));
+    console.log(key)
     try {
-      const note = await Note.newNote(key, 'New Note')
+      const note = await Note.newNote(key, format !== 'todo' ? 'New Note' : '')
       props.onNewNote(note)
     } catch (e) {
       props.onError(e)
@@ -55,6 +59,7 @@ const AddNote = (props: AddNoteProps) => {
         <select className='Input' value={format} onChange={e => setFormat(e.target.value)} name='format'>
           <option value="txt">Text</option>
           <option value="md">Markdown</option>
+          <option value="todo">Todo</option>
         </select>
       </div>
       <div className='InputFooter'>

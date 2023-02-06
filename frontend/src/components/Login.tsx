@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import tokenManager from './TokenManager';
+import tokenManager from '../models/TokenManager';
 
 interface AddNoteProps {
   onError(err: any): void
