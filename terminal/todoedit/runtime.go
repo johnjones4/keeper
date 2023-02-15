@@ -14,6 +14,7 @@ type runtime struct {
 	lastDelete  time.Time
 	inputText   string
 	inputCursor int
+	moving      bool
 }
 
 const (
@@ -41,6 +42,11 @@ func (rt *runtime) render() {
 	for y < listHeight && listIndex < len(rt.list.todos) {
 		todo := rt.list.todos[listIndex]
 		lineStr := todo.string()
+		prefixIndent := 0
+		if rt.moving && listIndex == rt.selected {
+			lineStr = ">" + lineStr
+			prefixIndent = 1
+		}
 		x := 0
 		for i, c := range lineStr {
 			var comb []rune
@@ -51,8 +57,8 @@ func (rt *runtime) render() {
 				w = 1
 			}
 			style := tcell.StyleDefault.
-				Underline(i == 1 && listIndex == rt.selected).
-				StrikeThrough(todo.done && i > 3)
+				Underline(!rt.moving && i == todo.indent+1+prefixIndent && listIndex == rt.selected).
+				StrikeThrough(todo.done && i > todo.indent+3+prefixIndent)
 			rt.screen.SetContent(x, y, c, comb, style)
 			x += w1
 			if x >= w {
@@ -92,28 +98,62 @@ func (rt *runtime) handleKeyForTodos(event *tcell.EventKey) error {
 	switch event.Key() {
 	case tcell.KeyTAB:
 		rt.selected = -1
+		rt.moving = false
+		rt.render()
+	case tcell.KeyLeft:
+		if rt.list.todos[rt.selected].indent == 0 {
+			return nil
+		}
+		rt.list.todos[rt.selected].indent--
+		err := rt.list.save()
+		if err != nil {
+			return err
+		}
+		rt.render()
+	case tcell.KeyRight:
+		rt.list.todos[rt.selected].indent++
+		err := rt.list.save()
+		if err != nil {
+			return err
+		}
 		rt.render()
 	case tcell.KeyDown:
 		rt.lastDelete = time.Time{}
 		if rt.selected < len(rt.list.todos)-1 {
+			if rt.moving {
+				temp := rt.list.todos[rt.selected+1]
+				rt.list.todos[rt.selected+1] = rt.list.todos[rt.selected]
+				rt.list.todos[rt.selected] = temp
+			}
 			rt.selected++
 		} else {
 			rt.selected = -1
+			rt.moving = false
 		}
 		rt.render()
 	case tcell.KeyUp:
 		rt.lastDelete = time.Time{}
 		if rt.selected > 0 {
+			if rt.moving {
+				temp := rt.list.todos[rt.selected-1]
+				rt.list.todos[rt.selected-1] = rt.list.todos[rt.selected]
+				rt.list.todos[rt.selected] = temp
+			}
 			rt.selected--
 		} else {
 			rt.selected = -1
+			rt.moving = false
 		}
 		rt.render()
 	case tcell.KeyEnter:
-		rt.lastDelete = time.Time{}
-		err := rt.list.toggle(rt.selected)
-		if err != nil {
-			return err
+		if rt.moving {
+			rt.moving = false
+		} else {
+			rt.lastDelete = time.Time{}
+			err := rt.list.toggle(rt.selected)
+			if err != nil {
+				return err
+			}
 		}
 		rt.render()
 	case tcell.KeyDEL, tcell.KeyDelete:
@@ -140,6 +180,9 @@ func (rt *runtime) handleKeyForTodos(event *tcell.EventKey) error {
 			if err != nil {
 				return err
 			}
+			rt.render()
+		} else if string(r) == "m" {
+			rt.moving = true
 			rt.render()
 		}
 	}

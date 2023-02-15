@@ -9,7 +9,7 @@
   align-items: stretch;
 }
 
-.TodoEditor .Todo.Todo-Done {
+.TodoEditor .Todo.Todo-Done .Todo-Text {
   text-decoration:line-through;
 }
 
@@ -29,6 +29,10 @@
   outline: none;
   background: none;
   color: black;
+}
+
+.TodoEditor .Todo button:disabled {
+  color: gray;
 }
 
 .TodoEditor .Todo input {

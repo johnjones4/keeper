@@ -1,6 +1,7 @@
 export interface Todo {
   done: boolean
   text: string
+  indent: number
 }
 
 enum TodoState {
@@ -21,9 +22,14 @@ export class Todos {
       if (line.trim() === '') {
         return null
       }
+      let indent = 0
+      while (indent < line.length && line[indent] === ' ') {
+        indent++
+      }
       return {
         done: line.substring(0, 4) !== TodoState.undone,
-        text: line.substring(4)
+        text: line.substring(4),
+        indent
       }
     }).filter(i => !!i) as Todo[]
     return todos
@@ -37,7 +43,7 @@ export class Todos {
 
   text(): string {
     return this.todos.map(todo => {
-      return (todo.done ? TodoState.done : TodoState.undone) + todo.text
+      return spaces(todo.indent) + (todo.done ? TodoState.done : TodoState.undone) + todo.text
     }).join('\n')
   }
 
@@ -57,7 +63,24 @@ export class Todos {
   addItem(text: string): Todos {
     return Todos.fromTodos(this.todos.concat([{
       done: false,
+      indent: 0,
       text
     }]))
   }
+
+  indentItem(index: number, direction: number): Todos {
+    if (this.todos[index].indent === 0 && direction < 0) {
+      return this
+    }
+    return Todos.fromTodos(this.todos.map((todo, i) => {
+      if (i === index) {
+        todo.indent += direction
+      }
+      return todo
+    }))
+  }
+}
+
+const spaces = (i: number): string => {
+  return new Array(i).map(_ => ' ').join('')
 }

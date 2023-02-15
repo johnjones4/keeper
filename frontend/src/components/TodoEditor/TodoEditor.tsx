@@ -37,15 +37,23 @@ const TodoEditor = (props: TodoEditorProps) => {
     props.onChange(newTodos.text())
   }
 
+  const indent = (index: number, direction: number) => {
+    const newTodos = todos.indentItem(index, direction)
+    setTodos(newTodos)
+    props.onChange(newTodos.text())
+  }
+
   return (
     <div className='TodoEditor'>
       { todos.todos.map((todo, i) => {
         return (
-          <div key={todo.text} className={`Todo ${todo.done ? 'Todo-Done' : 'Todo-Undone'}`}>
+          <div key={todo.text} className={`Todo ${todo.done ? 'Todo-Done' : 'Todo-Undone'}`} style={{paddingLeft: `${todo.indent}em`}}>
             <label>
               <input type="checkbox" checked={todo.done} onChange={(e) => todoChanged(i, e.target.checked)} />
-              { todo.text }
+              <span className='Todo-Text'>{ todo.text }</span>
             </label>
+            <button onClick={() => indent(i, -1)} disabled={todo.indent === 0}>&larr;</button>
+            <button onClick={() => indent(i, 1)}>&rarr;</button>
             <button onClick={() => removeTodo(i)}>x</button>
           </div>
         )

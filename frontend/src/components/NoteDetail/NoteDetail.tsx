@@ -3,6 +3,7 @@ import { Note } from '../../models/Note';
 import MDEditor from '@uiw/react-md-editor';
 import './NoteDetail.css'
 import TodoEditor from '../TodoEditor/TodoEditor';
+const path = require('path-browserify');
 
 interface NotesListProps {
   noteKey: string
@@ -57,9 +58,9 @@ const NoteDetail = (props: NotesListProps) => {
 
   const renderEditor = (): any => {
     if (note) {
-      const ext = note.key.substring(note.key.indexOf('.')+1)
+      const ext = path.extname(note.key)
       switch (ext) {
-        case 'md':
+        case '.md':
           return (
             <MDEditor
               value={noteBody}
@@ -67,7 +68,7 @@ const NoteDetail = (props: NotesListProps) => {
               preview='edit'
             />
           )
-        case 'todo':
+        case '.todo':
           return (
             <TodoEditor
               value={noteBody}

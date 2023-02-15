@@ -7,8 +7,9 @@ import (
 )
 
 type todo struct {
-	text string
-	done bool
+	text   string
+	done   bool
+	indent int
 }
 
 func (t todo) string() string {
@@ -16,7 +17,7 @@ func (t todo) string() string {
 	if t.done {
 		prefix = doneStr
 	}
-	return prefix + t.text
+	return makeIndent(t.indent) + prefix + t.text
 }
 
 type todoList struct {
@@ -31,6 +32,7 @@ const (
 
 var (
 	errorOutOfBounds = errors.New("index out of bounds")
+	errorInvalidLine = errors.New("invalid line")
 )
 
 func (tl *todoList) open() error {
@@ -49,13 +51,34 @@ func (tl *todoList) open() error {
 		if strings.TrimSpace(line) == "" {
 			continue
 		}
-		tl.todos = append(tl.todos, todo{
-			done: strings.Index(line, doneStr) == 0,
-			text: line[4:],
-		})
+		indent := 0
+		if line[0] == ' ' {
+			for indent < len(line) && line[indent] == ' ' {
+				indent++
+			}
+		} else {
+			indent = 0
+		}
+		if line[indent] == '[' {
+			tl.todos = append(tl.todos, todo{
+				done:   strings.Index(line[indent:], doneStr) == 0,
+				text:   line[indent+4:],
+				indent: indent,
+			})
+		} else {
+			return errorInvalidLine
+		}
 	}
 
 	return nil
+}
+
+func makeIndent(i int) string {
+	strs := make([]byte, i)
+	for j := 0; j < i; j++ {
+		strs[j] = ' '
+	}
+	return string(strs)
 }
 
 func (tl *todoList) save() error {
@@ -66,7 +89,7 @@ func (tl *todoList) save() error {
 
 	contents := strings.Join(lines, "\n")
 
-	err := os.WriteFile(tl.path, []byte(contents), 777)
+	err := os.WriteFile(tl.path, []byte(contents), 0777)
 	if err != nil {
 		return err
 	}
