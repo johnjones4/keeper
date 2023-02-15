@@ -1,3 +1,4 @@
+const path = require('path-browserify');
 export default class NoteNode {
   parent?: NoteNode
   name: string
@@ -21,7 +22,11 @@ export default class NoteNode {
 
   _addNote(parts: string[]) {
     if (parts.length === 1) {
-      this.notes.push(parts[0])
+      if (path.extname(parts[0]) === '') {
+        this.children.push(new NoteNode(parts[0] as string, this))
+      } else {
+        this.notes.push(parts[0])
+      }
     } else {
       const root = parts.shift()
       let child = this.children.find(c => c.name === root)

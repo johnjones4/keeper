@@ -41,6 +41,15 @@ export class Note {
     return json as NotesResponse
   }
 
+  static async getNotesDir(dir: string): Promise<NotesResponse> {
+    const res = await fetch(`/api/note?dir=${encodeURIComponent(dir)}`, {
+      headers: tokenManager.getHeaders()
+    })
+    const json = await res.json()
+    errorHandler(res, json)
+    return json as NotesResponse
+  }
+
   static async getNote(key: string): Promise<Note> {
     const id = Base64.encode(key)
     const res = await fetch(`/api/note/${encodeURIComponent(id)}`, {

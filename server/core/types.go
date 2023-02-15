@@ -12,6 +12,7 @@ type Store interface {
 	SaveNote(n *Note, failOnOverwrite bool, failOnNew bool) error
 	GetNote(key string) (Note, error)
 	GetNotes(pageSize int, page string) ([]string, string, error)
+	GetNoteDirectory(directory string) ([]string, error)
 }
 
 type Index interface {

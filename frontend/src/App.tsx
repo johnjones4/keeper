@@ -7,45 +7,52 @@ import { Note } from './models/Note';
 import NoteDetail from './components/NoteDetail/NoteDetail';
 import NotesList from './components/NotesList/NotesList';
 import tokenManager from './models/TokenManager'
+import NoteSet from './models/NoteSet';
 
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(tokenManager.isReady())
-  const [notes, setNotes] = useState([] as string[])
+  const [notes, setNotes] = useState(new NoteSet([]))
   const [note, setNote] = useState(null as string|null)
   const [message, setMessage] = useState(null as null|Message)
   const [addNotePrefix, setAddNotePrefix] = useState(null as string|null)
 
-  const loadNotes = async () => {
+  const loadNotesInitial = async () => {
     try {
-      let endOfList = false
-      let localNotes = [] as string[]
-      let page = ''
-      while (!endOfList) {
-        const resp = await Note.getNotes(page)
-        page = resp.nextPage
-        endOfList = page === ''
-        if (resp.notes.length > 0) {
-          localNotes = localNotes.concat(resp.notes)
-          setNotes(localNotes)
-        }
-      }
+      const resp = await Note.getNotesDir('/')
+      setNotes(new NoteSet(resp.notes))
     } catch (e) {
       showMessage({type: MessageType.error, message: `${e}`})
     }
   }
 
+  const loadNotesDir = async (dir: string) => {
+    try {
+      const resp = await Note.getNotesDir(dir)
+      setNotes(notes.update(resp.notes))
+    } catch (e) {
+      showMessage({type: MessageType.error, message: `${e}`})
+    }
+  }
+
+  const removeNotesDir = (dir: string) => {
+    setNotes(new NoteSet(notes.notes.filter(note => {
+      console.log(note, dir)
+      return note === dir || !note.startsWith(dir)
+    })))
+  }
+
   const doSearch = async (query: string) => {
     if (query === '') {
-      loadNotes()
+      loadNotesInitial()
       return
     }
     const localNotes = await Note.search(query)
-    setNotes(localNotes.notes)
+    setNotes(new NoteSet(localNotes.notes))
   }
 
   useEffect(() => {
-    loadNotes()
+    loadNotesInitial()
   }, [loggedIn])
 
   const showMessage = (m: Message) => {
@@ -71,10 +78,17 @@ function App() {
   return (
     <div className='NoteApp'>
       <NotesList 
-        notes={notes}
+        notes={notes.notes}
         onNoteSelected={k => setNote(k)} 
-        onNewNote={prefix => setAddNotePrefix(prefix !== undefined ? prefix : null)}
+        onNewNote={prefix => {
+          if (prefix) {
+            loadNotesDir(prefix)
+          }
+          setAddNotePrefix(prefix !== undefined ? prefix : null)
+        }}
         onSearch={q => doSearch(q)}
+        onWantsSubdirectory={d => loadNotesDir(d)}
+        onDiscardSubdirectory={d => removeNotesDir(d)}
         />
       { note && (<NoteDetail 
         noteKey={note} 
@@ -89,7 +103,7 @@ function App() {
           onNewNote={n => {
             setNote(n.key)
             setAddNotePrefix(null)
-            setNotes(notes.concat(n.key))
+            setNotes(notes.update([n.key]))
           }} 
           onCancel={() => setAddNotePrefix(null)} 
         />

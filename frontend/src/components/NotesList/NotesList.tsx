@@ -8,6 +8,8 @@ interface NotesListProps {
   onNoteSelected(key: string): void
   onNewNote(prefix?: string): void
   onSearch(query: string): void
+  onWantsSubdirectory(dir: string): void
+  onDiscardSubdirectory(dir: string): void
   notes: string[]
 }
 
@@ -25,7 +27,7 @@ const NotesList = (props: NotesListProps) => {
     return (
       <li key={node.name}>
         <div className='NoteTitle'>
-          <span className='NoteTitleText'>{node.name === '' ? 'Root' : node.name}</span>
+          <button onClick={() => node.children.length > 0 || node.notes.length > 0 ? props.onDiscardSubdirectory(node.getBasePath()) : props.onWantsSubdirectory(node.getBasePath())} className='NoteTitleText'>{node.name === '' ? 'Root' : node.name}</button>
           <button onClick={() => props.onNewNote(node.getBasePath())} className='ButtonAddNote'>+</button>
         </div>
         <ul>

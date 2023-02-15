@@ -21,6 +21,12 @@ func (a *API) getNotes(w http.ResponseWriter, r *http.Request) {
 			errorResponse(w, http.StatusInternalServerError, err)
 			return
 		}
+	} else if r.URL.Query().Has("dir") {
+		notes, err = a.runtime.Store.GetNoteDirectory(r.URL.Query().Get("dir"))
+		if err != nil {
+			errorResponse(w, http.StatusInternalServerError, err)
+			return
+		}
 	} else {
 		page := r.URL.Query().Get("page")
 		notes, nextPage, err = a.runtime.Store.GetNotes(3, page)

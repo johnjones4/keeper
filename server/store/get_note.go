@@ -10,6 +10,9 @@ func (s *StaticFileStore) GetNote(key string) (core.Note, error) {
 	cKey := path.Clean(key)
 
 	notePath := path.Join(s.rootDir, cKey)
+	if !s.isPathSafe(notePath) {
+		return core.Note{}, core.ErrorBadPath
+	}
 
 	contents, err := os.ReadFile(notePath)
 	if err != nil {
