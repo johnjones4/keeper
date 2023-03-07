@@ -27,8 +27,8 @@ export class Todos {
         indent++
       }
       return {
-        done: line.substring(0, 4) !== TodoState.undone,
-        text: line.substring(4),
+        done: line.substring(indent, indent+4) !== TodoState.undone,
+        text: line.substring(indent+4),
         indent
       }
     }).filter(i => !!i) as Todo[]
@@ -81,6 +81,10 @@ export class Todos {
   }
 }
 
-const spaces = (i: number): string => {
-  return new Array(i).map(_ => ' ').join('')
+const spaces = (l: number): string => {
+  let spc = ''
+  for (let i = 0; i < l; i++) {
+    spc += ' '
+  }
+  return spc
 }

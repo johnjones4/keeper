@@ -61,7 +61,7 @@ function App() {
   }
 
   const handleError = (e: any) => {
-    if (`${e}` === 'needs login') {
+    if (`${e}` === 'Error: needs login') {
       setLoggedIn(false)
       return
     }
