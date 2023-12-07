@@ -39,7 +39,7 @@ func (s *StaticFileStore) SaveNote(n *core.Note, failOnOverwrite bool, failOnNew
 		return err
 	}
 
-	n.Modified = stat.ModTime().UTC()
+	n.Modified = core.NoteTime(stat.ModTime().UTC())
 
 	return nil
 }

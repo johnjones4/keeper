@@ -20,13 +20,13 @@ func (a *API) newToken(w http.ResponseWriter, r *http.Request) {
 	var in newTokenRequest
 	err := readJson(r, &in)
 	if err != nil {
-		errorResponse(w, http.StatusBadGateway, err)
+		a.errorResponse(w, http.StatusBadGateway, err)
 		return
 	}
 
 	err = bcrypt.CompareHashAndPassword(a.runtime.PasswordHash, []byte(in.Password))
 	if err != nil {
-		errorResponse(w, http.StatusForbidden, err)
+		a.errorResponse(w, http.StatusForbidden, err)
 		return
 	}
 
@@ -40,11 +40,11 @@ func (a *API) newToken(w http.ResponseWriter, r *http.Request) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	ss, err := token.SignedString(a.runtime.PrivateKey)
 	if err != nil {
-		errorResponse(w, http.StatusInternalServerError, err)
+		a.errorResponse(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	jsonResponse(w, http.StatusOK, newTokenResponse{
+	a.jsonResponse(w, http.StatusOK, newTokenResponse{
 		Token: ss,
 	})
 }

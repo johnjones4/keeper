@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "simplepath",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/raymondjavaxx/SimplePath",
+      "state" : {
+        "revision" : "d119db69ea9c39118440172ba3faef8b686a255f",
+        "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "sqlite.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/stephencelis/SQLite.swift",
+      "state" : {
+        "revision" : "7a2e3cd27de56f6d396e84f63beefd0267b55ccb",
+        "version" : "0.14.1"
+      }
+    }
+  ],
+  "version" : 2
+}

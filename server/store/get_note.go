@@ -29,7 +29,7 @@ func (s *StaticFileStore) GetNote(key string) (core.Note, error) {
 		return core.Note{}, err
 	}
 
-	n.Modified = stat.ModTime().UTC()
+	n.Modified = core.NoteTime(stat.ModTime().UTC())
 
 	return n, err
 }

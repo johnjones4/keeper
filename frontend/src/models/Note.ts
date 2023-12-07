@@ -14,9 +14,6 @@ export interface NotesResponse {
 
 const errorHandler = (res: Response, json: any) => {
   if (res.status !== 200) {
-    if (res.headers.has('X-Show-Login')) {
-      throw new Error('needs login')
-    }
     throw new Error(json.message)
   }
 }

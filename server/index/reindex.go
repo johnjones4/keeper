@@ -2,7 +2,7 @@ package index
 
 import (
 	"database/sql"
-	"log"
+	"time"
 )
 
 func (i *Index) ReIndex() error {
@@ -14,7 +14,7 @@ func (i *Index) ReIndex() error {
 	for firstPass || nextPage != "" {
 		firstPass = false
 
-		log.Printf("[INDEX] Getting notes for page %s", nextPage)
+		i.log.Infof("[INDEX] Getting notes for page %s", nextPage)
 
 		notes, page, err := i.store.GetNotes(100, nextPage)
 		if err != nil {
@@ -41,13 +41,13 @@ func (i *Index) ReIndex() error {
 			}
 
 			if noRows {
-				log.Printf("[INDEX] Adding to index: %s", keypath)
+				i.log.Infof("[INDEX] Adding to index: %s", keypath)
 				err = i.Add(&note)
 				if err != nil {
 					return err
 				}
-			} else if note.Modified.Unix() > int64(modified) {
-				log.Printf("[INDEX] Updating index: %s", keypath)
+			} else if time.Time(note.Modified).Unix() > int64(modified) {
+				i.log.Infof("[INDEX] Updating index: %s", keypath)
 				err = i.Update(&note)
 				if err != nil {
 					return err
@@ -73,13 +73,13 @@ func (i *Index) ReIndex() error {
 		}
 
 		if !pathInList(touchedPaths, keypath) {
-			log.Printf("[INDEX] Will delete: %s", keypath)
+			i.log.Infof("[INDEX] Will delete: %s", keypath)
 			deletePaths = append(deletePaths, keypath)
 		}
 	}
 
 	for _, keypath := range deletePaths {
-		log.Printf("[INDEX] Deleting: %s", keypath)
+		i.log.Infof("[INDEX] Deleting: %s", keypath)
 
 		_, err = i.db.Exec("DELETE FROM mod_index WHERE keypath = ?", keypath)
 		if err != nil {

@@ -1,9 +1,12 @@
 package index
 
-import "main/core"
+import (
+	"main/core"
+	"time"
+)
 
 func (i *Index) Update(n *core.Note) error {
-	_, err := i.db.Exec("UPDATE mod_index SET modified = ? WHERE keypath = ?", n.Modified.Unix(), n.Key)
+	_, err := i.db.Exec("UPDATE mod_index SET modified = ? WHERE keypath = ?", time.Time(n.Modified).Unix(), n.Key)
 	if err != nil {
 		return err
 	}

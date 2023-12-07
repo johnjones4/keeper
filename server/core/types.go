@@ -1,11 +1,17 @@
 package core
 
-import "time"
+import (
+	"time"
+
+	"go.uber.org/zap"
+)
+
+type NoteTime time.Time
 
 type Note struct {
-	Key      string    `json:"key"`
-	Body     string    `json:"body"`
-	Modified time.Time `json:"modified"`
+	Key      string   `json:"key"`
+	Body     string   `json:"body"`
+	Modified NoteTime `json:"modified"`
 }
 
 type Store interface {
@@ -27,4 +33,5 @@ type RuntimeContext struct {
 	Index        Index
 	PrivateKey   []byte
 	PasswordHash []byte
+	Log          *zap.SugaredLogger
 }

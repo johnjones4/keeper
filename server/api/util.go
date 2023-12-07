@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 	"time"
 )
@@ -22,10 +21,10 @@ func unmarshalKey(id string) (string, error) {
 	return string(bytes), nil
 }
 
-func jsonResponse(w http.ResponseWriter, status int, info any) {
+func (a *API) jsonResponse(w http.ResponseWriter, status int, info any) {
 	bytes, err := json.Marshal(info)
 	if err != nil {
-		log.Println(err)
+		a.runtime.Log.Error(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -35,13 +34,13 @@ func jsonResponse(w http.ResponseWriter, status int, info any) {
 	w.Write(bytes)
 }
 
-func errorResponse(w http.ResponseWriter, status int, err error) {
-	log.Print(err)
+func (a *API) errorResponse(w http.ResponseWriter, status int, err error) {
+	a.runtime.Log.Error(err)
 	msg := map[string]any{
 		"ok":      false,
 		"message": err.Error(),
 	}
-	jsonResponse(w, status, msg)
+	a.jsonResponse(w, status, msg)
 }
 
 func readJson(r *http.Request, readTo any) error {
