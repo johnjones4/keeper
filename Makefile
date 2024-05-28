@@ -11,9 +11,10 @@ container:
 	docker image rm ${TAG}:latest
 
 ui:
-	cd frontend && npm install
-	cd frontend && npm run build
-	tar zcvf ui.tar.gz ./frontend/build
+	rm -rf ./frontend/dist/spa || true
+	cd frontend && corepack yarn
+	cd frontend && corepack yarn run build
+	tar zcvf ui.tar.gz ./frontend/dist/spa
 	git tag ${VERSION}
 	git push origin ${VERSION}
 	gh release create ${VERSION} ui.tar.gz --generate-notes
