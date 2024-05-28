@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"io"
+	"main/core"
 	"net/http"
 	"time"
 )
@@ -55,4 +56,24 @@ func readJson(r *http.Request, readTo any) error {
 	}
 
 	return nil
+}
+
+func mapFromCoreNote(note core.Note) Note {
+	return Note{
+		Key:      note.Key,
+		Body:     note.Body,
+		Modified: (*time.Time)(&note.Modified),
+	}
+}
+
+func mapToCoreNote(note Note) core.Note {
+	now := time.Now()
+	if note.Modified == nil {
+		note.Modified = &now
+	}
+	return core.Note{
+		Key:      note.Key,
+		Body:     note.Body,
+		Modified: core.NoteTime(*note.Modified),
+	}
 }

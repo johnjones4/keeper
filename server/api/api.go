@@ -28,23 +28,16 @@ func New(runtime *core.RuntimeContext) *API {
 	a.r.Use(middleware.Logger)
 	a.r.Use(middleware.Recoverer)
 
-	a.r.Route("/api", func(r chi.Router) {
-		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusOK)
-		})
-
-		r.Post("/token", a.newToken)
-
-		r.Route("/note", func(r chi.Router) {
-			r.Use(a.verifyToken)
-
-			r.Get("/", a.getNotes)
-			r.Post("/", a.newNote)
-			r.Route("/{id}", func(r chi.Router) {
-				r.Get("/", a.getNote)
-				r.Put("/", a.updateNote)
-			})
-		})
+	a.r.Group(func(mux chi.Router) {
+		options := ChiServerOptions{
+			BaseURL:    "/api",
+			BaseRouter: mux,
+			ErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
+				runtime.Log.Error(err)
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			},
+		}
+		HandlerWithOptions(a, options)
 	})
 
 	return a

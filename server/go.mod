@@ -7,12 +7,15 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/mattn/go-sqlite3 v1.14.16
 	go.uber.org/zap v1.26.0
-	golang.org/x/crypto v0.5.0
+	golang.org/x/crypto v0.17.0
 )
 
 require (
+	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
+	github.com/google/uuid v1.5.0 // indirect
+	github.com/oapi-codegen/runtime v1.1.1 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
-	golang.org/x/sys v0.4.0 // indirect
+	golang.org/x/sys v0.15.0 // indirect
 )
 
 require (

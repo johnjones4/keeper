@@ -2,33 +2,40 @@ package api
 
 import (
 	"net/http"
+	"net/url"
 )
 
-type notesResponse struct {
-	Notes    []string `json:"notes"`
-	NextPage string   `json:"nextPage"`
-}
+func (a *API) GetNote(w http.ResponseWriter, r *http.Request, params GetNoteParams) {
+	if !a.verifyToken(w, r) {
+		return
+	}
 
-func (a *API) getNotes(w http.ResponseWriter, r *http.Request) {
 	var notes []string
 	var nextPage string
 	var err error
 
-	if r.URL.Query().Has("q") {
-		q := r.URL.Query().Get("q")
-		notes, err = a.runtime.Index.Search(q)
+	if params.Q != nil {
+		dir, err := url.QueryUnescape(*params.Q)
+		if err != nil {
+			a.errorResponse(w, http.StatusBadRequest, err)
+			return
+		}
+		notes, err = a.runtime.Index.Search(dir)
 		if err != nil {
 			a.errorResponse(w, http.StatusInternalServerError, err)
 			return
 		}
-	} else if r.URL.Query().Has("dir") {
-		notes, err = a.runtime.Store.GetNoteDirectory(r.URL.Query().Get("dir"))
+	} else if params.Dir != nil {
+		notes, err = a.runtime.Store.GetNoteDirectory(*params.Dir)
 		if err != nil {
 			a.errorResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 	} else {
-		page := r.URL.Query().Get("page")
+		var page string
+		if params.Page != nil {
+			page = *params.Page
+		}
 		notes, nextPage, err = a.runtime.Store.GetNotes(3, page)
 		if err != nil {
 			a.errorResponse(w, http.StatusInternalServerError, err)
@@ -36,9 +43,9 @@ func (a *API) getNotes(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	resp := notesResponse{
+	resp := Notes{
 		Notes:    notes,
-		NextPage: nextPage,
+		NextPage: &nextPage,
 	}
 
 	a.jsonResponse(w, http.StatusOK, resp)

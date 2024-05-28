@@ -5,20 +5,22 @@ import (
 	"main/core"
 	"net/http"
 	"net/url"
-
-	"github.com/go-chi/chi/v5"
 )
 
-func (a *API) updateNote(w http.ResponseWriter, r *http.Request) {
-	var note core.Note
+func (a *API) PutNoteKey(w http.ResponseWriter, r *http.Request, dirtyId string, params PutNoteKeyParams) {
+	if !a.verifyToken(w, r) {
+		return
+	}
 
-	err := readJson(r, &note)
+	var inNote Note
+
+	err := readJson(r, &inNote)
 	if err != nil {
 		a.errorResponse(w, http.StatusBadRequest, err)
 		return
 	}
 
-	id, err := url.QueryUnescape(chi.URLParam(r, "id"))
+	id, err := url.QueryUnescape(dirtyId)
 	if err != nil {
 		a.errorResponse(w, http.StatusBadRequest, err)
 		return
@@ -29,6 +31,8 @@ func (a *API) updateNote(w http.ResponseWriter, r *http.Request) {
 		a.errorResponse(w, http.StatusBadRequest, err)
 		return
 	}
+
+	note := mapToCoreNote(inNote)
 
 	if key != note.Key {
 		a.errorResponse(w, http.StatusBadRequest, errors.New("key mismatch"))
@@ -51,5 +55,5 @@ func (a *API) updateNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	a.jsonResponse(w, http.StatusOK, note)
+	a.jsonResponse(w, http.StatusOK, mapFromCoreNote(note))
 }

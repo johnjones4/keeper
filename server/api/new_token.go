@@ -8,16 +8,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type newTokenRequest struct {
-	Password string `json:"password"`
-}
-
-type newTokenResponse struct {
-	Token string `json:"token"`
-}
-
-func (a *API) newToken(w http.ResponseWriter, r *http.Request) {
-	var in newTokenRequest
+func (a *API) PostToken(w http.ResponseWriter, r *http.Request) {
+	var in TokenRequest
 	err := readJson(r, &in)
 	if err != nil {
 		a.errorResponse(w, http.StatusBadGateway, err)
@@ -44,7 +36,7 @@ func (a *API) newToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	a.jsonResponse(w, http.StatusOK, newTokenResponse{
+	a.jsonResponse(w, http.StatusOK, TokenResponse{
 		Token: ss,
 	})
 }

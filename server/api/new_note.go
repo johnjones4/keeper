@@ -5,14 +5,20 @@ import (
 	"net/http"
 )
 
-func (a *API) newNote(w http.ResponseWriter, r *http.Request) {
-	var note core.Note
+func (a *API) PostNote(w http.ResponseWriter, r *http.Request, params PostNoteParams) {
+	if !a.verifyToken(w, r) {
+		return
+	}
 
-	err := readJson(r, &note)
+	var inNote Note
+
+	err := readJson(r, &inNote)
 	if err != nil {
 		a.errorResponse(w, http.StatusBadRequest, err)
 		return
 	}
+
+	note := mapToCoreNote(inNote)
 
 	err = a.runtime.Store.SaveNote(&note, true, false)
 	if err != nil {
@@ -30,5 +36,5 @@ func (a *API) newNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	a.jsonResponse(w, http.StatusOK, note)
+	a.jsonResponse(w, http.StatusOK, mapFromCoreNote(note))
 }

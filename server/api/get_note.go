@@ -3,12 +3,14 @@ package api
 import (
 	"net/http"
 	"net/url"
-
-	"github.com/go-chi/chi/v5"
 )
 
-func (a *API) getNote(w http.ResponseWriter, r *http.Request) {
-	id, err := url.QueryUnescape(chi.URLParam(r, "id"))
+func (a *API) GetNoteKey(w http.ResponseWriter, r *http.Request, dirtyId string, params GetNoteKeyParams) {
+	if !a.verifyToken(w, r) {
+		return
+	}
+
+	id, err := url.QueryUnescape(dirtyId)
 	if err != nil {
 		a.errorResponse(w, http.StatusBadRequest, err)
 		return
@@ -26,5 +28,5 @@ func (a *API) getNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	a.jsonResponse(w, http.StatusOK, note)
+	a.jsonResponse(w, http.StatusOK, mapFromCoreNote(note))
 }
